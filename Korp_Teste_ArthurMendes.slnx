@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Estoque/Estoque.csproj" />
+  <Project Path="Faturamento/Faturamento.csproj" />
+</Solution>
