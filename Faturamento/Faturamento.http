@@ -1,0 +1,31 @@
+@Faturamento_HostAddress = http://localhost:5008
+
+### Swagger UI (navegador)
+# {{Faturamento_HostAddress}}/swagger
+
+### Listar notas
+GET {{Faturamento_HostAddress}}/api/invoices
+Accept: application/json
+
+### Health
+GET {{Faturamento_HostAddress}}/health
+
+### Criar nota (status inicial aberta; numeração gerada pelo servidor)
+POST {{Faturamento_HostAddress}}/api/invoices
+Content-Type: application/json
+
+{
+  "date": "2026-04-13T12:00:00Z",
+  "total": 150.00,
+  "items": [
+    {
+      "produtoId": 1,
+      "produtoCodigo": "P001",
+      "produtoDescricao": "Caneta Azul",
+      "quantidade": 2
+    }
+  ]
+}
+
+### Imprimir nota (ex.: id 1) — exige Estoque em execução
+POST {{Faturamento_HostAddress}}/api/invoices/1/print

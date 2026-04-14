@@ -1,0 +1,69 @@
+version: "3.8"
+services:
+  postgres_estoque:
+    image: postgres:15
+    container_name: postgres_estoque_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: estoque_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_estoque_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d estoque_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  postgres_faturamento:
+    image: postgres:15
+    container_name: postgres_faturamento_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: faturamento_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_faturamento_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d faturamento_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  estoque:
+    build:
+      context: .
+      dockerfile: Estoque/Dockerfile
+    depends_on:
+      - postgres_estoque
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres_estoque;Database=estoque_db;Username=postgres;Password=postgres
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "5259:80"
+    restart: unless-stopped
+
+  faturamento:
+    build:
+      context: .
+      dockerfile: Faturamento/Dockerfile
+    depends_on:
+      - postgres_faturamento
+      - estoque
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres_faturamento;Database=faturamento_db;Username=postgres;Password=postgres
+      - EstoqueServiceBaseUrl=http://estoque:80
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "5260:80"
+    restart: unless-stopped
+
+volumes:
+  postgres_estoque_data:
+  postgres_faturamento_data:

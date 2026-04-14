@@ -1,6 +1,48 @@
-@Korp_Teste_ArthurMendes_HostAddress = http://localhost:5259
+@Estoque_HostAddress = http://localhost:5259
 
-GET {{Korp_Teste_ArthurMendes_HostAddress}}/weatherforecast/
+### Swagger UI (navegador)
+# {{Estoque_HostAddress}}/swagger
+
+### Listar produtos
+GET {{Estoque_HostAddress}}/api/produtos
 Accept: application/json
 
-###
+### Health
+GET {{Estoque_HostAddress}}/health
+
+### Obter por código
+GET {{Estoque_HostAddress}}/api/produtos/P001
+
+### Cadastrar produto
+POST {{Estoque_HostAddress}}/api/produtos
+Content-Type: application/json
+
+{
+  "codigo": "P099",
+  "descricao": "Produto teste",
+  "saldoInicial": 100
+}
+
+### Registrar saída (baixa) no estoque
+POST {{Estoque_HostAddress}}/api/produtos/P001/saida
+Content-Type: application/json
+
+{
+  "quantidade": 1
+}
+
+### Registrar entrada (reposição)
+POST {{Estoque_HostAddress}}/api/produtos/P001/entrada
+Content-Type: application/json
+
+{
+  "quantidade": 1
+}
+
+### Atualizar saldo para um valor final (correção administrativa)
+PUT {{Estoque_HostAddress}}/api/produtos/P001/saldo
+Content-Type: application/json
+
+{
+  "novoSaldo": 13
+}
