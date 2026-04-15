@@ -18,6 +18,9 @@ namespace EstoqueService.Data
                 .IsUnique();
 
             modelBuilder.Entity<Produto>()
+                .UseXminAsConcurrencyToken();
+
+            modelBuilder.Entity<Produto>()
                 .Property(p => p.Descricao)
                 .IsRequired();
 

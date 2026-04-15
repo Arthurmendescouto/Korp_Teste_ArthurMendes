@@ -148,9 +148,9 @@ namespace Faturamento.Services
                 if (doc.RootElement.TryGetProperty("error", out var e))
                     return e.GetString() ?? string.Empty;
             }
-            catch
+            catch (JsonException)
             {
-                // ignora corpo inválido
+                return string.Empty;
             }
 
             return string.Empty;

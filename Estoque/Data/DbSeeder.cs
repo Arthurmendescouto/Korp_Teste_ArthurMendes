@@ -7,10 +7,8 @@ namespace EstoqueService.Data
     {
         public static async Task SeedAsync(EstoqueDbContext db)
         {
-            // Cria o schema conforme o modelo (útil para testes rápidos; em produção use migrations)
             await db.Database.EnsureCreatedAsync();
 
-            // Se já existem produtos, assume que já está semeado
             if (await db.Produtos.AnyAsync()) return;
 
             var produtos = new[]

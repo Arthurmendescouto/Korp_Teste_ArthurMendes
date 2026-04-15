@@ -1,5 +1,7 @@
 using System.Text.Json;
+using System.Reflection;
 using EstoqueService.Data;
+using EstoqueService.Exceptions;
 using EstoqueService.Repositories;
 using EstoqueService.Services;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +15,8 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     });
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 builder.Services.AddHealthChecks();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -23,6 +27,11 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1",
         Description = "Cadastro de produtos e ajuste de saldo. Consumido pelo Faturamento ao imprimir notas."
     });
+
+    var xml = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var path = Path.Combine(AppContext.BaseDirectory, xml);
+    if (File.Exists(path))
+        options.IncludeXmlComments(path, includeControllerXmlComments: true);
 });
 
 var connection = configuration.GetConnectionString("DefaultConnection")
@@ -32,6 +41,7 @@ builder.Services.AddDbContext<EstoqueDbContext>(options =>
 
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IIdempotencyService, IdempotencyService>();
 
 var corsOrigins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
     ?? new[] { "http://localhost:4200" };
@@ -45,6 +55,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {

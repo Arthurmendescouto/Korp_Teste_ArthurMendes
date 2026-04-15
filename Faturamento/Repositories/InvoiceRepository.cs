@@ -56,7 +56,6 @@ namespace Faturamento.Repositories
             if (invoice == null) return false;
             if (invoice.Status != Models.InvoiceStatus.Aberta) return false;
 
-            // Mark as closed
             invoice.Status = Models.InvoiceStatus.Fechada;
             _db.Invoices.Update(invoice);
             await _db.SaveChangesAsync();

@@ -4,16 +4,12 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <UserSecretsId>75eab82c-cadb-4147-9734-df43af7e476a</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Removed explicit Microsoft.AspNetCore.OpenApi package to avoid assembly-version conflicts
-         with Swashbuckle. The Microsoft.AspNetCore.OpenApi types are provided by the shared
-         framework for net10.0; keeping an additional package copy caused a TypeLoadException
-         at startup. If you need a specific OpenAPI package surface, add a compatible version
-         that matches Swashbuckle's dependencies. -->
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">

@@ -8,11 +8,11 @@ namespace EstoqueService.Models
         public int Id { get; set; }
 
         [Required]
-        public string Codigo { get; set; } = null!; // campo obrigatório usado nas integrações
+        public string Codigo { get; set; } = string.Empty;
 
         [Required]
         public string Descricao { get; set; } = null!;
 
-        public int Saldo { get; set; } // quantidade em estoque
+        public int Saldo { get; set; }
     }
 }

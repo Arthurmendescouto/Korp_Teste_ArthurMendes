@@ -6,7 +6,6 @@ namespace Faturamento.Models
     {
         public int Id { get; set; }
 
-        // Sequencial - gerado pelo serviço no momento do cadastro
         public int Number { get; set; }
 
         public InvoiceStatus Status { get; set; } = InvoiceStatus.Aberta;

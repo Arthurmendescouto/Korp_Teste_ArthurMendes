@@ -1,5 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Reflection;
+using Faturamento.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -13,6 +15,8 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true));
     });
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 builder.Services.AddHealthChecks();
 
 var connection = configuration.GetConnectionString("DefaultConnection")
@@ -39,6 +43,11 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1",
         Description = "Gestão de notas fiscais. A impressão integra com o microsserviço de Estoque para baixa de saldo."
     });
+
+    var xml = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var path = Path.Combine(AppContext.BaseDirectory, xml);
+    if (File.Exists(path))
+        options.IncludeXmlComments(path, includeControllerXmlComments: true);
 });
 
 var corsOrigins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
@@ -53,6 +62,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
