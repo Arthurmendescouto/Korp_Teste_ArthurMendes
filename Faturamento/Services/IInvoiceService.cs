@@ -6,7 +6,9 @@ namespace Faturamento.Services
     {
         Task<IEnumerable<Invoice>> GetAllAsync();
         Task<Invoice?> GetByIdAsync(int id);
-        Task<Invoice> CreateAsync(Invoice invoice);
-        Task<bool> PrintAsync(int invoiceId, CancellationToken cancellationToken = default);
+        Task<Invoice> CreateAsync(Invoice invoice, CancellationToken cancellationToken = default);
+
+        /// <summary>Processa impressão: baixa estoque, fecha a nota e retorna o PDF. Null se a nota não existir ou não estiver aberta.</summary>
+        Task<byte[]?> PrintAsync(int invoiceId, CancellationToken cancellationToken = default);
     }
 }

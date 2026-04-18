@@ -48,7 +48,17 @@ var corsOrigins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>(
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
-        policy.WithOrigins(corsOrigins)
+        policy.SetIsOriginAllowed(origin =>
+            {
+                if (string.IsNullOrWhiteSpace(origin)) return false;
+                if (corsOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase)) return true;
+                if (Uri.TryCreate(origin, UriKind.Absolute, out var uri))
+                {
+                    if (uri.IsLoopback) return true;
+                    if (uri.Host.EndsWith(".vercel.app", StringComparison.OrdinalIgnoreCase)) return true;
+                }
+                return false;
+            })
             .AllowAnyHeader()
             .AllowAnyMethod());
 });

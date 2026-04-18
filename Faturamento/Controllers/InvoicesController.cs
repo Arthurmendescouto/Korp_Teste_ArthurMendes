@@ -42,7 +42,7 @@ namespace Faturamento.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Invoice invoice, CancellationToken cancellationToken)
         {
-            var created = await _service.CreateAsync(invoice);
+            var created = await _service.CreateAsync(invoice, cancellationToken);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
@@ -50,12 +50,14 @@ namespace Faturamento.Controllers
         /// Imprime (fecha) uma nota fiscal e efetua a baixa de estoque dos itens.
         /// </summary>
         [HttpPost("{id:int}/print")]
+        [Produces("application/pdf")]
         public async Task<IActionResult> Print(int id, CancellationToken cancellationToken)
         {
-            var ok = await _service.PrintAsync(id, cancellationToken);
-            if (!ok)
+            var pdf = await _service.PrintAsync(id, cancellationToken);
+            if (pdf is null || pdf.Length == 0)
                 return BadRequest(new { error = "Impressão inválida: nota não existe ou não está com status Aberta." });
-            return Ok(new { message = "Nota impressa com sucesso. Status atualizado para Fechada e saldos do estoque atualizados." });
+
+            return File(pdf, "application/pdf", $"nota-{id}.pdf");
         }
     }
 }
